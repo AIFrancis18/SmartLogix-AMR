@@ -55,27 +55,28 @@ function Login() {
 
       const correoLimpio = correo.trim().toLowerCase();
 
-      // 🔥 VALIDACIONES
-      const regexCorreo = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      // 🔥 VALIDAR CORREO (.COM Y .CL)
+      const regexCorreo =
+        /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(com|cl)$/;
 
       if (!regexCorreo.test(correoLimpio)) {
-        throw new Error("Ingrese un correo válido");
+
+        throw new Error(
+          "Ingrese un correo válido terminado en .com o .cl"
+        );
+
       }
 
-      const dominiosPermitidos = [
-        "gmail.com",
-        "hotmail.com",
-        "duoc.cl"
-      ];
+      // 🔥 VALIDAR CONTRASEÑA
+      if (
+        contrasena.length < 8 ||
+        contrasena.length > 24
+      ) {
 
-      const dominio = correoLimpio.split("@")[1];
+        throw new Error(
+          "La contraseña debe tener entre 8 y 24 caracteres"
+        );
 
-      if (!dominiosPermitidos.includes(dominio)) {
-        throw new Error("Solo Gmail, Hotmail o Duoc");
-      }
-
-      if (contrasena.length < 4 || contrasena.length > 12) {
-        throw new Error("Contraseña entre 4 y 12 caracteres");
       }
 
       // 🔥 PETICIÓN LOGIN
@@ -96,7 +97,11 @@ function Login() {
       );
 
       if (!response.ok) {
-        throw new Error("Credenciales incorrectas");
+
+        throw new Error(
+          "Credenciales incorrectas"
+        );
+
       }
 
       const token = await response.text();
@@ -111,19 +116,27 @@ function Login() {
       setTimeout(() => {
 
         if (data.rol === "ADMIN") {
+
           navigate("/admin");
+
         }
 
         else if (data.rol === "OPERADOR") {
+
           navigate("/operador");
+
         }
 
         else if (data.rol === "LOGISTICA") {
+
           navigate("/logistica");
+
         }
 
         else {
+
           navigate("/");
+
         }
 
       }, 1000);
@@ -157,7 +170,9 @@ function Login() {
           type="email"
           placeholder="Correo electrónico"
           value={correo}
-          onChange={(e) => setCorreo(e.target.value)}
+          onChange={(e) =>
+            setCorreo(e.target.value)
+          }
         />
 
         <input
@@ -165,15 +180,25 @@ function Login() {
           type="password"
           placeholder="Contraseña"
           value={contrasena}
-          onChange={(e) => setContrasena(e.target.value)}
+          onChange={(e) =>
+            setContrasena(e.target.value)
+          }
         />
 
         <button
           className="login-button"
           onClick={login}
-          disabled={loading || !correo || !contrasena}
+          disabled={
+            loading ||
+            !correo ||
+            !contrasena
+          }
         >
-          {loading ? "Ingresando..." : "Ingresar"}
+
+          {loading
+            ? "Ingresando..."
+            : "Ingresar"}
+
         </button>
 
         <p className="login-message">
@@ -182,7 +207,9 @@ function Login() {
 
         <p
           className="login-link"
-          onClick={() => navigate("/register")}
+          onClick={() =>
+            navigate("/register")
+          }
         >
           ¿No tienes cuenta? Regístrate
         </p>
