@@ -89,11 +89,18 @@ function AdminPage() {
       }
     );
 
-    setPedidos(await res.json());
+    const data = await res.json();
+
+    // 🔥 MÁS NUEVOS PRIMERO
+    const pedidosOrdenados = data.sort(
+      (a, b) => b.id - a.id
+    );
+
+    setPedidos(pedidosOrdenados);
 
   };
 
-  // 🔥 CARGAR ENVIOS
+  // 🔥 CARGAR ENVÍOS
   const cargarEnvios = async () => {
 
     const res = await fetch(
@@ -105,11 +112,18 @@ function AdminPage() {
       }
     );
 
-    setEnvios(await res.json());
+    const data = await res.json();
+
+    // 🔥 MÁS NUEVOS PRIMERO
+    const enviosOrdenados = data.sort(
+      (a, b) => b.id - a.id
+    );
+
+    setEnvios(enviosOrdenados);
 
   };
 
-  // 🔥 LIMPIAR FORM
+  // 🔥 LIMPIAR FORMULARIO
   const limpiarFormulario = () => {
 
     setForm({
@@ -122,6 +136,69 @@ function AdminPage() {
 
     setModoEdicion(false);
 
+    setMensaje("");
+
+  };
+
+  // 🔥 VALIDACIONES
+  const validarFormulario = () => {
+
+    const nombreLimpio = form.nombre.trim();
+
+    const correoLimpio = form.correo
+      .trim()
+      .toLowerCase();
+
+    // 🔥 SOLO LETRAS
+    const regexNombre =
+      /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
+
+    // 🔥 LETRAS + NÚMEROS + .COM/.CL
+    const regexCorreo =
+      /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(com|cl)$/;
+
+    if (!nombreLimpio) {
+      throw new Error(
+        "El nombre es obligatorio"
+      );
+    }
+
+    if (nombreLimpio.length < 3) {
+      throw new Error(
+        "El nombre debe tener mínimo 3 caracteres"
+      );
+    }
+
+    if (!regexNombre.test(nombreLimpio)) {
+      throw new Error(
+        "El nombre solo puede contener letras"
+      );
+    }
+
+    if (!regexCorreo.test(correoLimpio)) {
+      throw new Error(
+        "Ingrese un correo válido (.com o .cl)"
+      );
+    }
+
+    // 🔥 SOLO VALIDAR CONTRASEÑA SI EXISTE
+    if (
+      form.contrasena &&
+      (
+        form.contrasena.length < 8 ||
+        form.contrasena.length > 24
+      )
+    ) {
+      throw new Error(
+        "La contraseña debe tener entre 8 y 24 caracteres"
+      );
+    }
+
+    return {
+      nombre: nombreLimpio,
+      correo: correoLimpio
+    };
+
   };
 
   // 🔥 GUARDAR USUARIO
@@ -131,11 +208,21 @@ function AdminPage() {
 
       setMensaje("");
 
-      const metodo = modoEdicion ? "PUT" : "POST";
+      const datosValidados =
+        validarFormulario();
+
+      const metodo =
+        modoEdicion ? "PUT" : "POST";
 
       const url = modoEdicion
         ? `http://localhost:9090/usuarios/${form.id}`
         : "http://localhost:9090/usuarios";
+
+      const bodyData = {
+        ...form,
+        nombre: datosValidados.nombre,
+        correo: datosValidados.correo
+      };
 
       const res = await fetch(url, {
 
@@ -146,15 +233,19 @@ function AdminPage() {
           Authorization: "Bearer " + token
         },
 
-        body: JSON.stringify(form)
+        body: JSON.stringify(bodyData)
 
       });
 
       if (!res.ok) {
-        throw new Error("Error al guardar usuario");
+        throw new Error(
+          "Error al guardar usuario"
+        );
       }
 
-      setMensaje("✅ Usuario guardado correctamente");
+      setMensaje(
+        "✅ Usuario guardado correctamente"
+      );
 
       limpiarFormulario();
 
@@ -212,7 +303,9 @@ function AdminPage() {
 
     } catch {
 
-      setMensaje("❌ Error al eliminar usuario");
+      setMensaje(
+        "❌ Error al eliminar usuario"
+      );
 
     }
 
@@ -237,7 +330,10 @@ function AdminPage() {
 
         <>
           <div className="header-section">
-            <h3>Gestión de Usuarios</h3>
+
+            <h3>
+              Gestión de Usuarios
+            </h3>
 
             <button
               className="btn btn-primary"
@@ -248,6 +344,7 @@ function AdminPage() {
             >
               + Nuevo Usuario
             </button>
+
           </div>
 
           <table className="table">
@@ -352,7 +449,11 @@ function AdminPage() {
             <input
               className="input"
               type="password"
-              placeholder="Contraseña"
+              placeholder={
+                modoEdicion
+                  ? "Nueva contraseña (opcional)"
+                  : "Contraseña"
+              }
               value={form.contrasena}
               onChange={(e) =>
                 setForm({
@@ -372,9 +473,18 @@ function AdminPage() {
                 })
               }
             >
-              <option value="ADMIN">ADMIN</option>
-              <option value="OPERADOR">OPERADOR</option>
-              <option value="LOGISTICA">LOGISTICA</option>
+              <option value="ADMIN">
+                ADMIN
+              </option>
+
+              <option value="OPERADOR">
+                OPERADOR
+              </option>
+
+              <option value="LOGISTICA">
+                LOGISTICA
+              </option>
+
             </select>
 
           </div>
@@ -414,7 +524,9 @@ function AdminPage() {
       return (
 
         <>
-          <h3>Pedidos del Sistema</h3>
+          <h3>
+            Pedidos del Sistema
+          </h3>
 
           <table className="table">
 
@@ -455,13 +567,15 @@ function AdminPage() {
 
     }
 
-    // 🔹 ENVIOS
+    // 🔹 ENVÍOS
     if (vista === "envios") {
 
       return (
 
         <>
-          <h3>Envíos del Sistema</h3>
+          <h3>
+            Envíos del Sistema
+          </h3>
 
           <table className="table">
 
@@ -522,7 +636,9 @@ function AdminPage() {
 
           <button
             className="nav-btn"
-            onClick={() => navigate("/dashboard")}
+            onClick={() =>
+              navigate("/dashboard")
+            }
           >
             Dashboard
           </button>
@@ -533,7 +649,9 @@ function AdminPage() {
                 ? "nav-active"
                 : ""
             }`}
-            onClick={() => setVista("usuarios")}
+            onClick={() =>
+              setVista("usuarios")
+            }
           >
             Usuarios
           </button>
@@ -544,7 +662,9 @@ function AdminPage() {
                 ? "nav-active"
                 : ""
             }`}
-            onClick={() => setVista("crear")}
+            onClick={() =>
+              setVista("crear")
+            }
           >
             Crear
           </button>
@@ -555,7 +675,9 @@ function AdminPage() {
                 ? "nav-active"
                 : ""
             }`}
-            onClick={() => setVista("pedidos")}
+            onClick={() =>
+              setVista("pedidos")
+            }
           >
             Pedidos
           </button>
@@ -566,7 +688,9 @@ function AdminPage() {
                 ? "nav-active"
                 : ""
             }`}
-            onClick={() => setVista("envios")}
+            onClick={() =>
+              setVista("envios")
+            }
           >
             Envíos
           </button>
@@ -582,7 +706,7 @@ function AdminPage() {
 
       </div>
 
-      {/*  CONTENIDO */}
+      {/* 🔥 CONTENIDO */}
       <div className="container">
 
         <div className="section">
