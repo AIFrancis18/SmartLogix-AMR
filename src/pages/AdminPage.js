@@ -582,7 +582,7 @@ function AdminPage() {
 
       </div>
 
-      {/* 🔥 CONTENIDO */}
+      {/*  CONTENIDO */}
       <div className="container">
 
         <div className="section">
