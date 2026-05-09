@@ -10,7 +10,7 @@ import java.util.Map;
 @FeignClient(name = "servicioenvio", url = "http://localhost:8083")
 public interface EnvioClient {
 
-    // 🔹 obtener envíos por pedido
+    // 🔹 obtener envíos por pedidos
     @GetMapping("/envios/pedido/{pedidoId}")
     List<Object> obtenerEnvios(@PathVariable Long pedidoId);
 
