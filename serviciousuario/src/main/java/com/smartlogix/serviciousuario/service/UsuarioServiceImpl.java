@@ -24,51 +24,92 @@ public class UsuarioServiceImpl implements UsuarioService {
         this.jwtUtil = jwtUtil;
     }
 
-    // 🔥 REGEX CORREO
-    private final Pattern correoRegex =
-            Pattern.compile("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$");
+    // 🔥 REGEX NOMBRE (SOLO LETRAS Y ESPACIOS)
+    private final Pattern nombreRegex =
+            Pattern.compile("^[a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]+$");
 
-    private final List<String> dominiosPermitidos =
-            List.of("gmail.com", "hotmail.com", "duoc.cl");
+    // 🔥 REGEX CORREO (.COM Y .CL)
+    private final Pattern correoRegex =
+            Pattern.compile("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.(com|cl)$");
 
     @Override
     public Usuario guardar(Usuario usuario) {
 
-        // 🔥 VALIDAR CORREO
-        if (usuario.getCorreo() == null || !correoRegex.matcher(usuario.getCorreo()).matches()) {
-            throw new RuntimeException("Formato de correo inválido");
+        // 🔥 VALIDAR NOMBRE
+        if (usuario.getNombre() == null ||
+                usuario.getNombre().trim().isEmpty()) {
+
+            throw new RuntimeException(
+                    "El nombre es obligatorio"
+            );
         }
 
-        String dominio = usuario.getCorreo().split("@")[1];
+        String nombreLimpio = usuario.getNombre().trim();
 
-        if (!dominiosPermitidos.contains(dominio)) {
-            throw new RuntimeException("Solo se permiten correos Gmail, Hotmail o Duoc");
+        if (nombreLimpio.length() < 3) {
+
+            throw new RuntimeException(
+                    "El nombre debe tener mínimo 3 caracteres"
+            );
+        }
+
+        if (!nombreRegex.matcher(nombreLimpio).matches()) {
+
+            throw new RuntimeException(
+                    "El nombre solo puede contener letras"
+            );
+        }
+
+        // 🔥 VALIDAR CORREO
+        if (usuario.getCorreo() == null ||
+                !correoRegex.matcher(usuario.getCorreo()).matches()) {
+
+            throw new RuntimeException(
+                    "Correo inválido. Debe terminar en .com o .cl"
+            );
         }
 
         // 🔥 VALIDAR ROL
-        if (usuario.getRol() == null || usuario.getRol().isEmpty()) {
-            throw new RuntimeException("El rol es obligatorio");
+        if (usuario.getRol() == null ||
+                usuario.getRol().isEmpty()) {
+
+            throw new RuntimeException(
+                    "El rol es obligatorio"
+            );
         }
 
-        if (usuario.getId() != null && repository.existsById(usuario.getId())) {
+        // 🔥 UPDATE
+        if (usuario.getId() != null &&
+                repository.existsById(usuario.getId())) {
 
-            // 🔥 UPDATE
             Usuario existente = repository.findById(usuario.getId())
-                    .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                    .orElseThrow(() ->
+                            new RuntimeException("Usuario no encontrado"));
 
-            // 🔥 SI VIENE CONTRASEÑA → VALIDAR Y CAMBIAR
-            if (usuario.getContrasena() != null && !usuario.getContrasena().isEmpty()) {
+            // 🔥 SI VIENE CONTRASEÑA → VALIDAR
+            if (usuario.getContrasena() != null &&
+                    !usuario.getContrasena().isEmpty()) {
 
-                if (usuario.getContrasena().length() < 4 || usuario.getContrasena().length() > 12) {
-                    throw new RuntimeException("Contraseña entre 4 y 12 caracteres");
+                if (usuario.getContrasena().length() < 8 ||
+                        usuario.getContrasena().length() > 24) {
+
+                    throw new RuntimeException(
+                            "La contraseña debe tener entre 8 y 24 caracteres"
+                    );
                 }
 
-                existente.setContrasena(passwordEncoder.encode(usuario.getContrasena()));
+                existente.setContrasena(
+                        passwordEncoder.encode(usuario.getContrasena())
+                );
             }
 
             // 🔥 ACTUALIZAR DATOS
-            existente.setNombre(usuario.getNombre());
-            existente.setCorreo(usuario.getCorreo());
+            existente.setNombre(nombreLimpio);
+
+            existente.setCorreo(
+                    usuario.getCorreo().trim().toLowerCase()
+            );
+
             existente.setRol(usuario.getRol());
 
             return repository.save(existente);
@@ -77,19 +118,31 @@ public class UsuarioServiceImpl implements UsuarioService {
 
             // 🔥 CREATE
 
-            if (usuario.getContrasena() == null || usuario.getContrasena().isEmpty()) {
-                throw new RuntimeException("La contraseña es obligatoria");
+            if (usuario.getContrasena() == null ||
+                    usuario.getContrasena().isEmpty()) {
+
+                throw new RuntimeException(
+                        "La contraseña es obligatoria"
+                );
             }
 
-            if (usuario.getContrasena().length() < 4) {
-                throw new RuntimeException("La contraseña debe tener mínimo 4 caracteres");
+            if (usuario.getContrasena().length() < 8 ||
+                    usuario.getContrasena().length() > 24) {
+
+                throw new RuntimeException(
+                        "La contraseña debe tener entre 8 y 24 caracteres"
+                );
             }
 
-            if (usuario.getContrasena().length() > 12) {
-                throw new RuntimeException("La contraseña no puede superar 12 caracteres");
-            }
+            usuario.setNombre(nombreLimpio);
 
-            usuario.setContrasena(passwordEncoder.encode(usuario.getContrasena()));
+            usuario.setCorreo(
+                    usuario.getCorreo().trim().toLowerCase()
+            );
+
+            usuario.setContrasena(
+                    passwordEncoder.encode(usuario.getContrasena())
+            );
 
             return repository.save(usuario);
         }
@@ -103,9 +156,14 @@ public class UsuarioServiceImpl implements UsuarioService {
     // 🔥 ELIMINAR
     @Override
     public void eliminar(Long id) {
+
         if (!repository.existsById(id)) {
-            throw new RuntimeException("Usuario no existe");
+
+            throw new RuntimeException(
+                    "Usuario no existe"
+            );
         }
+
         repository.deleteById(id);
     }
 
@@ -113,29 +171,44 @@ public class UsuarioServiceImpl implements UsuarioService {
     public String login(String correo, String contrasena) {
 
         // 🔥 VALIDAR CORREO
-        if (correo == null || !correoRegex.matcher(correo).matches()) {
-            throw new RuntimeException("Formato de correo inválido");
-        }
+        if (correo == null ||
+                !correoRegex.matcher(correo).matches()) {
 
-        String dominio = correo.split("@")[1];
-
-        if (!dominiosPermitidos.contains(dominio)) {
-            throw new RuntimeException("Correo no permitido");
+            throw new RuntimeException(
+                    "Correo inválido"
+            );
         }
 
         // 🔥 VALIDAR CONTRASEÑA
-        if (contrasena == null || contrasena.length() < 4 || contrasena.length() > 12) {
-            throw new RuntimeException("Contraseña inválida");
+        if (contrasena == null ||
+                contrasena.length() < 8 ||
+                contrasena.length() > 24) {
+
+            throw new RuntimeException(
+                    "Contraseña inválida"
+            );
         }
 
-        Usuario usuario = repository.findByCorreo(correo)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        Usuario usuario = repository.findByCorreo(
+                        correo.trim().toLowerCase()
+                )
+                .orElseThrow(() ->
+                        new RuntimeException("Usuario no encontrado"));
 
-        if (!passwordEncoder.matches(contrasena, usuario.getContrasena())) {
-            throw new RuntimeException("Credenciales incorrectas");
+        if (!passwordEncoder.matches(
+                contrasena,
+                usuario.getContrasena()
+        )) {
+
+            throw new RuntimeException(
+                    "Credenciales incorrectas"
+            );
         }
 
         // 🔥 TOKEN CON ROL
-        return jwtUtil.generarToken(usuario.getCorreo(), usuario.getRol());
+        return jwtUtil.generarToken(
+                usuario.getCorreo(),
+                usuario.getRol()
+        );
     }
 }
