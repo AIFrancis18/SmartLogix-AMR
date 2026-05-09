@@ -1,0 +1,436 @@
+/* 🔥 NAVBAR */
+.navbar {
+
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 16px 28px;
+
+  background:
+    rgba(15, 23, 42, 0.92);
+
+  backdrop-filter: blur(10px);
+
+  border-bottom:
+    1px solid rgba(255,255,255,0.08);
+
+  box-shadow:
+    0 8px 20px rgba(0,0,0,0.15);
+
+}
+
+/* 🔥 TITULO */
+.nav-title {
+
+  font-size: 22px;
+  font-weight: 700;
+
+  color: white;
+
+  letter-spacing: 0.5px;
+
+}
+
+/* 🔥 BOTONES NAV */
+.nav-left {
+
+  display: flex;
+  gap: 12px;
+
+}
+
+.nav-btn {
+
+  border: none;
+
+  background: transparent;
+
+  color: #e2e8f0;
+
+  padding: 10px 16px;
+
+  border-radius: 12px;
+
+  cursor: pointer;
+
+  transition: 0.25s;
+
+  font-size: 14px;
+
+  font-weight: 600;
+
+}
+
+.nav-btn:hover {
+
+  background:
+    rgba(255,255,255,0.12);
+
+  transform: translateY(-1px);
+
+}
+
+.nav-active {
+
+  background:
+    linear-gradient(
+      135deg,
+      #2563eb,
+      #3b82f6
+    );
+
+  color: white;
+
+  box-shadow:
+    0 8px 18px rgba(37,99,235,0.35);
+
+}
+
+/* 🔥 LOGOUT */
+.logout {
+
+  border: none;
+
+  padding: 10px 16px;
+
+  border-radius: 12px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #ef4444,
+      #dc2626
+    );
+
+  color: white;
+
+  cursor: pointer;
+
+  font-weight: bold;
+
+  transition: 0.25s;
+
+}
+
+.logout:hover {
+
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 8px 18px rgba(239,68,68,0.35);
+
+}
+
+/* 🔥 CONTENEDOR */
+.container {
+
+  max-width: 1350px;
+
+  margin: auto;
+
+  padding: 30px 20px;
+
+}
+
+/* 🔥 CARD PRINCIPAL */
+.section {
+
+  background:
+    rgba(255,255,255,0.95);
+
+  backdrop-filter: blur(10px);
+
+  border-radius: 24px;
+
+  padding: 28px;
+
+  box-shadow:
+    0 12px 30px rgba(0,0,0,0.12);
+
+  border:
+    1px solid rgba(255,255,255,0.25);
+
+  animation: fadeIn 0.4s ease;
+
+  overflow-x: auto;
+
+  max-height: 78vh;
+
+  overflow-y: auto;
+
+}
+
+/* 🔥 TITULOS */
+h3 {
+
+  margin-top: 0;
+  margin-bottom: 24px;
+
+  color: #0f172a;
+
+  font-size: 26px;
+
+}
+
+/* 🔥 FORMULARIOS */
+.form {
+
+  display: flex;
+
+  flex-wrap: wrap;
+
+  gap: 14px;
+
+  margin-bottom: 24px;
+
+}
+
+/* 🔥 INPUTS */
+.input {
+
+  min-width: 220px;
+
+  padding: 12px 14px;
+
+  border-radius: 14px;
+
+  border: 1px solid #dbeafe;
+
+  background: #f8fafc;
+
+  outline: none;
+
+  transition: 0.25s;
+
+  font-size: 14px;
+
+}
+
+.input:focus {
+
+  border-color: #2563eb;
+
+  background: white;
+
+  box-shadow:
+    0 0 0 4px rgba(37,99,235,0.12);
+
+}
+
+/* 🔥 BOTONES */
+.btn {
+
+  border: none;
+
+  padding: 12px 18px;
+
+  border-radius: 14px;
+
+  cursor: pointer;
+
+  font-weight: bold;
+
+  transition: 0.25s;
+
+}
+
+/* 🔥 BOTON AZUL */
+.btn-primary {
+
+  background:
+    linear-gradient(
+      135deg,
+      #2563eb,
+      #3b82f6
+    );
+
+  color: white;
+
+  box-shadow:
+    0 8px 18px rgba(37,99,235,0.25);
+
+}
+
+.btn-primary:hover {
+
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 12px 24px rgba(37,99,235,0.35);
+
+}
+
+/* 🔥 BOTON ROJO */
+.btn-delete {
+
+  background:
+    linear-gradient(
+      135deg,
+      #ef4444,
+      #dc2626
+    );
+
+  color: white;
+
+}
+
+.btn-delete:hover {
+
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 8px 18px rgba(239,68,68,0.35);
+
+}
+
+/* 🔥 TABLAS */
+.table {
+
+  width: 100%;
+
+  border-collapse: separate;
+
+  border-spacing: 0 10px;
+
+  min-width: 850px;
+
+}
+
+/* 🔥 HEADER */
+.table th {
+
+  background:
+    linear-gradient(
+      135deg,
+      #2563eb,
+      #3b82f6
+    );
+
+  color: white;
+
+  padding: 14px;
+
+  text-align: left;
+
+  font-size: 14px;
+
+  position: sticky;
+
+  top: 0;
+
+}
+
+/* 🔥 BORDES HEADER */
+.table th:first-child {
+  border-radius: 12px 0 0 12px;
+}
+
+.table th:last-child {
+  border-radius: 0 12px 12px 0;
+}
+
+/* 🔥 FILAS */
+.table td {
+
+  background: white;
+
+  padding: 14px;
+
+  border-top: 1px solid #eef2ff;
+  border-bottom: 1px solid #eef2ff;
+
+}
+
+/* 🔥 EFECTO HOVER */
+.table tr {
+
+  transition: 0.2s;
+
+}
+
+.table tr:hover {
+
+  transform: scale(1.005);
+
+}
+
+/* 🔥 BORDES FILAS */
+.table td:first-child {
+  border-radius: 12px 0 0 12px;
+}
+
+.table td:last-child {
+  border-radius: 0 12px 12px 0;
+}
+
+/* 🔥 SELECT */
+select {
+
+  padding: 10px 12px;
+
+  border-radius: 10px;
+
+  border: 1px solid #cbd5e1;
+
+  background: white;
+
+  cursor: pointer;
+
+}
+
+/* 🔥 MENSAJES */
+.message {
+
+  margin-top: 20px;
+
+  font-weight: bold;
+
+  font-size: 14px;
+
+}
+
+/* 🔥 RESPONSIVE */
+@media (max-width: 768px) {
+
+  .navbar {
+
+    flex-direction: column;
+
+    align-items: flex-start;
+
+    gap: 16px;
+
+  }
+
+  .nav-left {
+
+    flex-wrap: wrap;
+
+  }
+
+  .container {
+
+    padding: 15px;
+
+  }
+
+  .section {
+
+    padding: 18px;
+
+    max-height: 75vh;
+
+  }
+
+  .table {
+
+    min-width: 650px;
+
+  }
+
+}
