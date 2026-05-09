@@ -19,45 +19,52 @@ function Register() {
       setMensaje("");
       setLoading(true);
 
-      const correoLimpio = correo.trim().toLowerCase();
+      const nombreLimpio = nombre.trim();
 
-      // 🔥 VALIDACIONES
-      const regexCorreo = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      const correoLimpio = correo
+        .trim()
+        .toLowerCase();
 
-      const dominiosPermitidos = [
-        "gmail.com",
-        "hotmail.com",
-        "duoc.cl"
-      ];
+      // 🔥 VALIDACIÓN NOMBRE
+      // Solo letras y espacios
+      const regexNombre = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
 
-      if (!nombre.trim()) {
-        throw new Error("El nombre es obligatorio");
+      if (!nombreLimpio) {
+        throw new Error(
+          "El nombre es obligatorio"
+        );
       }
 
-      if (nombre.trim().length < 3) {
+      if (nombreLimpio.length < 3) {
         throw new Error(
           "El nombre debe tener mínimo 3 caracteres"
         );
       }
 
-      if (!regexCorreo.test(correoLimpio)) {
-        throw new Error("Ingrese un correo válido");
-      }
-
-      const dominio = correoLimpio.split("@")[1];
-
-      if (!dominiosPermitidos.includes(dominio)) {
+      if (!regexNombre.test(nombreLimpio)) {
         throw new Error(
-          "Solo se permiten correos Gmail, Hotmail o Duoc"
+          "El nombre solo puede contener letras"
         );
       }
 
+      // 🔥 VALIDACIÓN CORREO
+      // Permite letras, números, .com y .cl
+      const regexCorreo =
+        /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(com|cl)$/;
+
+      if (!regexCorreo.test(correoLimpio)) {
+        throw new Error(
+          "Ingrese un correo válido (.com o .cl)"
+        );
+      }
+
+      // 🔥 VALIDACIÓN CONTRASEÑA
       if (
-        contrasena.length < 4 ||
-        contrasena.length > 12
+        contrasena.length < 8 ||
+        contrasena.length > 24
       ) {
         throw new Error(
-          "La contraseña debe tener entre 4 y 12 caracteres"
+          "La contraseña debe tener entre 8 y 24 caracteres"
         );
       }
 
@@ -72,7 +79,7 @@ function Register() {
           },
 
           body: JSON.stringify({
-            nombre: nombre.trim(),
+            nombre: nombreLimpio,
             correo: correoLimpio,
             contrasena,
             rol
