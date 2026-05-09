@@ -48,7 +48,7 @@ public class PedidoController {
         return service.obtenerPedidoConEnvios(id);
     }
 
-    // 🔥 ELIMINAR PEDIDO + ENVÍOS
+    // 🔥 ELIMINAR PEDIDOS + ENVÍOS
     @DeleteMapping("/{id}")
     public void eliminar(@PathVariable Long id){
         service.eliminar(id);
